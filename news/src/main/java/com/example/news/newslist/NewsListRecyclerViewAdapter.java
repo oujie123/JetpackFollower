@@ -1,12 +1,12 @@
-package com.example.news;
+package com.example.news.newslist;
 
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.base.recyclerview.BaseViewHolder;
 import com.example.base.customview.BaseViewModel;
+import com.example.base.recyclerview.BaseViewHolder;
 import com.example.common.picturetitleview.PictureTitleView;
 import com.example.common.picturetitleview.PictureTitleViewModel;
 import com.example.common.titleview.TitleView;
