@@ -1,1 +1,1 @@
-include ':app', ':network', ':webview', ':news'
+include ':app', ':network', ':webview', ':news', ':base', ':common'

@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.news.newslist.NewsListFragment;
+import com.example.news.NewsListFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
