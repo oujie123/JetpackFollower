@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.base.customview.BaseViewModel;
+import com.example.base.mvvm.model.BaseModel;
 import com.example.base.mvvm.model.IBaseModelListener;
 import com.example.base.mvvm.model.PagingResult;
 import com.example.news.R;
@@ -68,7 +69,7 @@ public class NewsListFragment extends Fragment implements IBaseModelListener<Lis
     }
 
     @Override
-    public void onLoadSuccess(List<BaseViewModel> baseViewModels, PagingResult... results) {
+    public void onLoadSuccess(BaseModel model, List<BaseViewModel> baseViewModels, PagingResult... results) {
         if (results != null && results.length > 0 && results[0].isFirst){
             viewModels.clear();
         }
@@ -81,7 +82,7 @@ public class NewsListFragment extends Fragment implements IBaseModelListener<Lis
     }
 
     @Override
-    public void onLoadFail(String e) {
+    public void onLoadFail(BaseModel model, String e, PagingResult... results) {
         Toast.makeText(getContext(),e,Toast.LENGTH_LONG).show();
     }
 }

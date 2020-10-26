@@ -2,8 +2,6 @@ package com.example.news.newslist;
 
 import com.example.base.customview.BaseViewModel;
 import com.example.base.mvvm.model.BaseModel;
-import com.example.base.mvvm.model.IBaseModelListener;
-import com.example.base.mvvm.model.PagingResult;
 import com.example.common.picturetitleview.PictureTitleViewModel;
 import com.example.common.titleview.TitleViewModel;
 import com.example.network.TecentNetworkApi;
@@ -21,14 +19,14 @@ import java.util.List;
  * @UpdateDate: 2020/10/20 22:17
  * @UpdateRemark: 更新说明
  */
-public class NewsListModel extends BaseModel {
+public class NewsListModel extends BaseModel<NewsListBean, List<BaseViewModel>> {
 
     private String mChannelId;
     private String mChannelName;
 
 
     public NewsListModel(String channelId, String channelName) {
-        super(true,1);
+        super(true, channelId + channelName + "_PREF_KEY", 1);
         this.mChannelId = channelId;
         this.mChannelName = channelName;
     }
@@ -39,12 +37,12 @@ public class NewsListModel extends BaseModel {
                 .getNewsList(mChannelId, mChannelName, String.valueOf(mPage))
                 .compose(TecentNetworkApi.getInstance().applySchedulers(new BaseObserver<NewsListBean>() {
                     @Override
-                    public void onSuccess(NewsListBean newsChannelsBean) {
+                    public void onSuccess(NewsListBean newsListBean) {
                         List<BaseViewModel> mContentList = new ArrayList<>();
                         if (mPage == 0) {
                             mContentList.clear();
                         }
-                        for (NewsListBean.Contentlist contentlist : newsChannelsBean.showapiResBody.pagebean.contentlist) {
+                        for (NewsListBean.Contentlist contentlist : newsListBean.showapiResBody.pagebean.contentlist) {
                             if (contentlist.imageurls != null && contentlist.imageurls.size() > 0) {
                                 PictureTitleViewModel viewModel = new PictureTitleViewModel();
                                 viewModel.jumpUri = contentlist.link;
@@ -58,13 +56,12 @@ public class NewsListModel extends BaseModel {
                                 mContentList.add(viewModel);
                             }
                         }
-                        mListenerWeakReference.get().onLoadSuccess(mContentList,new PagingResult(mPage==1,mContentList.isEmpty(),mContentList.size() > 10));
-                        mPage++;
+                        notifyResultListener(newsListBean, mContentList);
                     }
 
                     @Override
                     public void onFailure(Throwable e) {
-                        mListenerWeakReference.get().onLoadFail(e.getMessage());
+                        notifyFail(e.getMessage());
                     }
                 }));
     }

@@ -10,6 +10,6 @@ package com.example.base.mvvm.model;
 public interface IBaseModelListener<DATA> {
 
     // 接口可变长度
-    void onLoadSuccess(DATA data, PagingResult... results);
-    void onLoadFail(String e);
+    void onLoadSuccess(BaseModel model, DATA data, PagingResult... results);
+    void onLoadFail(BaseModel model, String e, PagingResult... results);
 }

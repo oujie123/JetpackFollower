@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import com.example.base.mvvm.model.BaseModel;
 import com.example.base.mvvm.model.IBaseModelListener;
 import com.example.base.mvvm.model.PagingResult;
 import com.example.news.R;
@@ -40,14 +41,14 @@ public class HeadlineNewsFragment extends Fragment implements IBaseModelListener
     }
 
     @Override
-    public void onLoadSuccess(List<NewsChannelsBean.ChannelList> channelLists, PagingResult... results) {
+    public void onLoadSuccess(BaseModel model, List<NewsChannelsBean.ChannelList> channelLists, PagingResult... results) {
         if (adapter != null) {
             adapter.setChannels(channelLists);
         }
     }
 
     @Override
-    public void onLoadFail(String e) {
+    public void onLoadFail(BaseModel model, String e, PagingResult... results) {
         Toast.makeText(getContext(), e, Toast.LENGTH_LONG).show();
     }
 }

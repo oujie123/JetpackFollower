@@ -2,6 +2,7 @@ package com.example.jetpackpractice.application;
 
 import android.app.Application;
 
+import com.example.base.preference.PreferencesUtil;
 import com.example.network.base.NetworkApi;
 
 public class ArchDemoApplication extends Application {
@@ -10,5 +11,6 @@ public class ArchDemoApplication extends Application {
     public void onCreate() {
         super.onCreate();
         NetworkApi.init(new NetworkRequestInfo(this));
+        PreferencesUtil.init(this);
     }
 }
