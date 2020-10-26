@@ -1,6 +1,7 @@
 package com.example.news.newslist;
 
 import com.example.base.customview.BaseViewModel;
+import com.example.base.mvvm.model.BaseModel;
 import com.example.base.mvvm.model.IBaseModelListener;
 import com.example.base.mvvm.model.PagingResult;
 import com.example.common.picturetitleview.PictureTitleViewModel;
@@ -20,25 +21,20 @@ import java.util.List;
  * @UpdateDate: 2020/10/20 22:17
  * @UpdateRemark: 更新说明
  */
-public class NewsListModel {
+public class NewsListModel extends BaseModel {
 
-    private IBaseModelListener<List<BaseViewModel>> mListener;
     private String mChannelId;
     private String mChannelName;
-    private int mPage = 1;
 
-    public NewsListModel(IBaseModelListener<List<BaseViewModel>> mListener, String channelId, String channelName) {
-        this.mListener = mListener;
+
+    public NewsListModel(String channelId, String channelName) {
+        super(true,1);
         this.mChannelId = channelId;
         this.mChannelName = channelName;
     }
 
-    public void refresh(){
-        mPage = 1;
-        loadNextPage();
-    }
-
-    public void loadNextPage() {
+    @Override
+    public void load() {
         TecentNetworkApi.getService(NewsApiInterface.class)
                 .getNewsList(mChannelId, mChannelName, String.valueOf(mPage))
                 .compose(TecentNetworkApi.getInstance().applySchedulers(new BaseObserver<NewsListBean>() {
@@ -62,13 +58,13 @@ public class NewsListModel {
                                 mContentList.add(viewModel);
                             }
                         }
-                        mListener.onLoadSuccess(mContentList,new PagingResult(mPage==1,mContentList.isEmpty(),mContentList.size() > 10));
+                        mListenerWeakReference.get().onLoadSuccess(mContentList,new PagingResult(mPage==1,mContentList.isEmpty(),mContentList.size() > 10));
                         mPage++;
                     }
 
                     @Override
                     public void onFailure(Throwable e) {
-                        mListener.onLoadFail(e.getMessage());
+                        mListenerWeakReference.get().onLoadFail(e.getMessage());
                     }
                 }));
     }

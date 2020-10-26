@@ -48,8 +48,9 @@ public class NewsListFragment extends Fragment implements IBaseModelListener<Lis
         viewDataBinding.listview.setHasFixedSize(true);
         viewDataBinding.listview.setLayoutManager(new LinearLayoutManager(getContext()));
         viewDataBinding.listview.setAdapter(mAdapter);
-        mNewsListModel = new NewsListModel(this, getArguments().getString(BUNDLE_KEY_PARAM_CHANNEL_ID),
+        mNewsListModel = new NewsListModel(getArguments().getString(BUNDLE_KEY_PARAM_CHANNEL_ID),
                 getArguments().getString(BUNDLE_KEY_PARAM_CHANNEL_NAME));
+        mNewsListModel.register(this);
         mNewsListModel.loadNextPage();
         viewDataBinding.refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override

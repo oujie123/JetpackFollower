@@ -33,7 +33,8 @@ public class HeadlineNewsFragment extends Fragment implements IBaseModelListener
         viewDataBinding.viewpager.setAdapter(adapter);
         viewDataBinding.tablayout.setupWithViewPager(viewDataBinding.viewpager);
         viewDataBinding.viewpager.setOffscreenPageLimit(1);
-        mNewsChanelModel = new NewsChannelModel(this);
+        mNewsChanelModel = new NewsChannelModel();
+        mNewsChanelModel.register(this);
         mNewsChanelModel.load();
         return viewDataBinding.getRoot();
     }

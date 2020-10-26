@@ -1,5 +1,6 @@
 package com.example.news.headlinenews;
 
+import com.example.base.mvvm.model.BaseModel;
 import com.example.base.mvvm.model.IBaseModelListener;
 import com.example.network.TecentNetworkApi;
 import com.example.network.observer.BaseObserver;
@@ -17,26 +18,25 @@ import java.util.List;
  * @UpdateDate: 2020/10/20 21:57
  * @UpdateRemark: 更新说明
  */
-public class NewsChannelModel {
+public class NewsChannelModel extends BaseModel {
 
-    private IBaseModelListener<List<NewsChannelsBean.ChannelList>> mListener;
-
-    public NewsChannelModel(IBaseModelListener listener) {
-        this.mListener = listener;
+    public NewsChannelModel() {
+        super(false);
     }
 
+    @Override
     public void load(){
         TecentNetworkApi.getService(NewsApiInterface.class)
                 .getNewsChannels()
                 .compose(TecentNetworkApi.getInstance().applySchedulers(new BaseObserver<NewsChannelsBean>() {
                     @Override
                     public void onSuccess(NewsChannelsBean newsChannelsBean) {
-                        mListener.onLoadSuccess(newsChannelsBean.showapiResBody.channelList);
+                        mListenerWeakReference.get().onLoadSuccess(newsChannelsBean.showapiResBody.channelList);
                     }
 
                     @Override
                     public void onFailure(Throwable e) {
-                        mListener.onLoadFail(e.getMessage());
+                        mListenerWeakReference.get().onLoadFail(e.getMessage());
                     }
                 }));
     }
