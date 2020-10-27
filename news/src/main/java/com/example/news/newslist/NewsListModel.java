@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 一个model对应一个网络请求
+ *
  * @Author: Jack Ou
  * @CreateDate: 2020/10/20 22:17
  * @UpdateUser: 更新者
@@ -26,7 +28,7 @@ public class NewsListModel extends BaseModel<NewsListBean, List<BaseViewModel>> 
 
 
     public NewsListModel(String channelId, String channelName) {
-        super(true, channelId + channelName + "_PREF_KEY", 1);
+        super(true, channelId + channelName + "_PREF_KEY", null,1);
         this.mChannelId = channelId;
         this.mChannelName = channelName;
     }
@@ -35,34 +37,34 @@ public class NewsListModel extends BaseModel<NewsListBean, List<BaseViewModel>> 
     public void load() {
         TecentNetworkApi.getService(NewsApiInterface.class)
                 .getNewsList(mChannelId, mChannelName, String.valueOf(mPage))
-                .compose(TecentNetworkApi.getInstance().applySchedulers(new BaseObserver<NewsListBean>() {
-                    @Override
-                    public void onSuccess(NewsListBean newsListBean) {
-                        List<BaseViewModel> mContentList = new ArrayList<>();
-                        if (mPage == 0) {
-                            mContentList.clear();
-                        }
-                        for (NewsListBean.Contentlist contentlist : newsListBean.showapiResBody.pagebean.contentlist) {
-                            if (contentlist.imageurls != null && contentlist.imageurls.size() > 0) {
-                                PictureTitleViewModel viewModel = new PictureTitleViewModel();
-                                viewModel.jumpUri = contentlist.link;
-                                viewModel.pictureUrl = contentlist.imageurls.get(0).url;
-                                viewModel.title = contentlist.title;
-                                mContentList.add(viewModel);
-                            } else {
-                                TitleViewModel viewModel = new TitleViewModel();
-                                viewModel.jumpUri = contentlist.link;
-                                viewModel.title = contentlist.title;
-                                mContentList.add(viewModel);
-                            }
-                        }
-                        notifyResultListener(newsListBean, mContentList);
-                    }
+                .compose(TecentNetworkApi.getInstance().applySchedulers(new BaseObserver(this,this)));
+    }
 
-                    @Override
-                    public void onFailure(Throwable e) {
-                        notifyFail(e.getMessage());
-                    }
-                }));
+    @Override
+    public void onSuccess(NewsListBean newsListBean, boolean isFromCache) {
+        List<BaseViewModel> mContentList = new ArrayList<>();
+        if (mPage == 0) {
+            mContentList.clear();
+        }
+        for (NewsListBean.Contentlist contentlist : newsListBean.showapiResBody.pagebean.contentlist) {
+            if (contentlist.imageurls != null && contentlist.imageurls.size() > 0) {
+                PictureTitleViewModel viewModel = new PictureTitleViewModel();
+                viewModel.jumpUri = contentlist.link;
+                viewModel.pictureUrl = contentlist.imageurls.get(0).url;
+                viewModel.title = contentlist.title;
+                mContentList.add(viewModel);
+            } else {
+                TitleViewModel viewModel = new TitleViewModel();
+                viewModel.jumpUri = contentlist.link;
+                viewModel.title = contentlist.title;
+                mContentList.add(viewModel);
+            }
+        }
+        notifyResultListener(newsListBean, mContentList, isFromCache);
+    }
+
+    @Override
+    public void onFailure(Throwable e) {
+        notifyFail(e.getMessage());
     }
 }
