@@ -9,13 +9,11 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.example.news.api.NewsChannelsBean;
 import com.example.news.newslist.NewsListFragment;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class HeadlineNewsFragmentAdapter extends FragmentPagerAdapter {
-
     private List<NewsChannelsBean.ChannelList> mChannels;
-    private HashMap<String, Fragment> fragmentHashMap = new HashMap<>();
+    private int itemCount = 0;
 
     public HeadlineNewsFragmentAdapter(FragmentManager fm) {
         super(fm);
@@ -23,26 +21,18 @@ public class HeadlineNewsFragmentAdapter extends FragmentPagerAdapter {
 
     public void setChannels(List<NewsChannelsBean.ChannelList> channels) {
         this.mChannels = channels;
+        itemCount = channels.size();
         notifyDataSetChanged();
     }
 
     @Override
     public Fragment getItem(int pos) {
-        String key = mChannels.get(pos).channelId + ":" + mChannels.get(pos).name;
-        if (fragmentHashMap.get(key) != null) {
-            return fragmentHashMap.get(key);
-        }
-        Fragment fragment = NewsListFragment.newInstance(mChannels.get(pos).channelId, mChannels.get(pos).name);
-        fragmentHashMap.put(key, fragment);
-        return fragment;
+        return NewsListFragment.newInstance(mChannels.get(pos).channelId, mChannels.get(pos).name);
     }
 
     @Override
     public int getCount() {
-        if (mChannels != null && mChannels.size() > 0) {
-            return mChannels.size();
-        }
-        return 0;
+        return itemCount;
     }
 
     @Override

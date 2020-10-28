@@ -13,20 +13,14 @@ import com.example.common.titleview.TitleView;
 
 import java.util.List;
 
-
 public class NewsListRecyclerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private final int VIEW_TYPE_PICTURE_TITLE = 1;
     private final int VIEW_TYPE_TITLE = 2;
     private List<BaseViewModel> mItems;
 
-    NewsListRecyclerViewAdapter() {
-
-    }
-
     void setData(List<BaseViewModel> items) {
         mItems = items;
-        // 第一次设置数据一定要打开，否者数据不会更新
         notifyDataSetChanged();
     }
 

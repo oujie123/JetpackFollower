@@ -17,27 +17,29 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
 
-public class HeadlineNewsFragment extends Fragment implements Observer<List<NewsChannelsBean.ChannelList>>{
-
+public class HeadlineNewsFragment extends Fragment {
     public HeadlineNewsFragmentAdapter adapter;
     FragmentHomeBinding viewDataBinding;
-    // viewModel还没有创建完成，数据就来了，就会报：The specified child already has a parent. You must call removeView() on the child's parent first.
-    private HeadlineNewsViewModel viewModel  = new HeadlineNewsViewModel();
-
+    private HeadlineNewsViewModel headlineNewsViewModel = new HeadlineNewsViewModel();
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         viewDataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         adapter = new HeadlineNewsFragmentAdapter(getChildFragmentManager());
         viewDataBinding.tablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-        viewDataBinding.tablayout.setupWithViewPager(viewDataBinding.viewpager);
         viewDataBinding.viewpager.setAdapter(adapter);
+        viewDataBinding.tablayout.setupWithViewPager(viewDataBinding.viewpager);
         viewDataBinding.viewpager.setOffscreenPageLimit(1);
-        viewModel.dataList.observe(this,this);
+        headlineNewsViewModel.dataList.observe(this, new Observer<List<NewsChannelsBean.ChannelList>>() {
+            @Override
+            public void onChanged(List<NewsChannelsBean.ChannelList> channelLists) {
+                adapter.setChannels(channelLists);
+            }
+        });
+        getLifecycle().addObserver(headlineNewsViewModel);
+        headlineNewsViewModel.getCachedDataAndLoad();
         return viewDataBinding.getRoot();
     }
 
-    @Override
-    public void onChanged(List<NewsChannelsBean.ChannelList> channelLists) {
-        adapter.setChannels(channelLists);
-    }
+
 }
+
